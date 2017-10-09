@@ -11,26 +11,23 @@ MongoClient.connect('mongodb://127.0.0.1/library', (err, db) => {
     process.exit(1)
   }
   const notes = db.collection('notes')
-  // let noteID = 1
 
   app.use(bodyParser.json())
 
   app.post('/notes', (req, res) => {
     req.body.id = uuid()
-    notes.insertOne(note, (err, result) => {
+    notes.insertOne(req.body, (err, result) => {
       if (err) {
         console.error(err)
+        res.sendStatus(500)
       }
       else {
         console.log(result)
+        res.sendStatus(201)
       }
 
-      res.sendStatus(201)
     })
 
-    app.get('/notes', (req, res) => res.json(notes))
-
-    db.close()
-
-    app.listen(3000, () => console.log('Listening on 3000!'))
   })
+  app.listen(3000, () => console.log('listening on 3000'))
+})
